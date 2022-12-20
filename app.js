@@ -22,7 +22,7 @@ app.use(morgan('dev'));
 app.use(errorHandler);
 //app.use(notFoundHandler);
 
-app.use('/todo',todoRouter)
+app.use('/',todoRouter)
 
 app.listen(PORT , ()=>{
         console.log(`Server läuft http://localhost:${PORT}`);
