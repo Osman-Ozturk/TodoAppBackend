@@ -23,6 +23,7 @@ const UserSchema = new Schema({
         },
         profilePicture: { type: String },
         mobile: { type: String },
+        bio: { type: String },
         isAdmin: { type: Boolean, default: false },
         isVerified: { type: Boolean, default: false },
       },

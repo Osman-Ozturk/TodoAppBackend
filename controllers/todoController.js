@@ -40,5 +40,16 @@ const deleteTodo = async(req,res,next)=>{
               }
         
 }
+const getToDo = async (req, res) => {
+        try {
+          const id = req.user.id;
+          const findToDosById = await TodoModel.find({ userId: id }).sort({
+            createdAt: -1,
+          });
+          res.send(findToDosById);
+        } catch (error) {
+          res.status(401).send({ error: error.message });
+        }
+      };
 
-export {getAllTodo,addTodo,updateTodo,deleteTodo}
+export {getAllTodo,addTodo,updateTodo,deleteTodo,getToDo}

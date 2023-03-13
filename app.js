@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 import *as dotenv from 'dotenv'
 import todoRouter from './routes/todoRoute.js'
+import userRouter from './routes/userRoute.js'
 import errorHandler from './middleware/errorHandler.js'
 import notFoundHandler from './middleware/notFoundHandler.js'
 
@@ -23,6 +24,7 @@ app.use(errorHandler);
 //app.use(notFoundHandler);
 
 app.use('/todos',todoRouter)
+app.use('/users',userRouter)
 
 app.listen(PORT , ()=>{
         console.log(`Server läuft http://localhost:${PORT}`);

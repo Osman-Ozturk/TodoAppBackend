@@ -2,7 +2,6 @@ import User from "../models/User.js";
 import sgMail from "@sendgrid/mail";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { OAuth2Client } from "google-auth-library";
 const SECRET_JWT = process.env.SECRET_JWT || "thisisoursecretjsonwebtoken";
 const getUsers = async (req, res, next) => {
   try {
@@ -106,55 +105,95 @@ const verifyPassword = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
-const login = async (req,res,next)=>{
-        try {
-                const user = req.body
-                const findUser =await User.findOne({email:user.email}) 
-                if (!findUser) {
-                        const error = new Error("Email or Password Is Incorrect");
-                        error.statusCode = 401;
-                        throw error;
-                      }
-                const compare = await bcrypt.compare(user.password,findUser.password)  
-                if (!compare) {
-                        const error = new Error("Email or Password Is Incorrect");
-                        error.statusCode = 401;
-                        throw error;
-                      }  
-                      
-                      const token = jwt.sign(
-                        {
-                          email: findUser.email,
-                          userId: findUser._id,
-                        },
-                        SECRET_JWT,
-                        { expiresIn: "1d" }
-                      );
-                      const einTag = 1000 * 60 * 60 * 24;
-                      res
-                        .cookie("loginCookie", token, {
-                          maxAge: einTag,
-                          httpOnly: true,
-                        })
-                        .send({
-                          auth: "loggedIn",
-                          fullName: findUser.fullName,
-                          firstName: findUser.firstName,
-                          lastName: findUser.lastName,
-                          profilePicture: findUser.profilePicture,
-                          email: findUser.email,
-                          _id: findUser._id,
-                          token: token,
-                          maxAge: einTag,
-                          httpOnly: true,
-                          isAdmin: findUser.isAdmin,
-                          city: findUser.city,
-                          mobile: findUser.mobile,
-                          bio: findUser.bio,
-                        });      
-        } catch (error) {
-                next(error)
-        }
+const login = async (req, res, next) => {
+  try {
+    const user = req.body;
+    const findUser = await User.findOne({ email: user.email });
+    if (!findUser) {
+      const error = new Error("Email or Password Is Incorrect");
+      error.statusCode = 401;
+      throw error;
+    }
+    const compare = await bcrypt.compare(user.password, findUser.password);
+    if (!compare) {
+      const error = new Error("Email or Password Is Incorrect");
+      error.statusCode = 401;
+      throw error;
+    }
 
+    const token = jwt.sign(
+      {
+        email: findUser.email,
+        userId: findUser._id,
+      },
+      SECRET_JWT,
+      { expiresIn: "1d" }
+    );
+    const einTag = 1000 * 60 * 60 * 24;
+    res
+      .cookie("loginCookie", token, {
+        maxAge: einTag,
+        httpOnly: true,
+      })
+      .send({
+        auth: "loggedIn",
+        fullName: findUser.fullName,
+        firstName: findUser.firstName,
+        lastName: findUser.lastName,
+        profilePicture: findUser.profilePicture,
+        email: findUser.email,
+        _id: findUser._id,
+        token: token,
+        maxAge: einTag,
+        httpOnly: true,
+        isAdmin: findUser.isAdmin,
+        city: findUser.city,
+        mobile: findUser.mobile,
+        bio: findUser.bio,
+      });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updatePassword = async (req, res, next) => {
+  try {
+    const { email } = req.user;
+    const { password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updatedUser = await User.findOneAndUpdate(
+      { email: email },
+      { password: hashedPassword },
+      { new: true }
+    );
+    res.status(200).send(updatedUser);
+  } catch (err) {
+    next(err);
+  }
+};
+const logout = async (req,res,next)=>{
+  try {
+    const id = req.body._id;
+    const updateUser = await User.findByIdAndUpdate(id,{updatedAt:new Date()},{new:true})
+    res.clearCookie("loginCookie")
+    res.status(201).send(updateUser)
+  } catch (error) {
+    next(error)
+  }
 }
-export { getUsers, addUser, getUserId, deleteTodo };
+const getUserWithEmail = async (req,res,next)=>{
+  try {
+    const email = req.params.email;
+    const user = await User.findOne({ email: `${email}` });
+    if (!user) {
+      const error = new Error("no users found");
+      error.statusCode = 401;
+      throw error;
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+export { getUsers, register, getUserId,login, verifyPassword,verifyEmail,updatePassword,logout,getUserWithEmail };
