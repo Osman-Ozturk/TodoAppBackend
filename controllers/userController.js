@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const SECRET_JWT = process.env.SECRET_JWT || "thisisoursecretjsonwebtoken";
 const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find({});
     res.status(201).json(users);
   } catch (error) {
     next(error);
@@ -63,7 +63,7 @@ const register = async (req, res, next) => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     const msg = {
       to: createdUser.email, // Change to your recipient
-      from: "ztrkosmn09@gmail.com", // Change to your verified sender
+      from: "amnaelsayed2@gmail.com",// Change to your verified sender
       subject: "Email verification",
       text: `Zur Verifizierung der email bitte zu folgender email gehen:http://localhost:${process.env.PORT}/users/verify/${token} `,
       html: `<p><a href="http://localhost:${process.env.PORT}/users/verify/${token}">Verifiziere deine Email</a></p>`,

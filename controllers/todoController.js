@@ -10,7 +10,12 @@ const getAllTodo = async(req,res,next)=>{
 }
 const addTodo = async(req,res,next)=>{
         try {
-                const todo = await TodoModel.create(req.body)
+                const newTodo= req.body
+                const todo = await TodoModel.create({
+                        todo:newTodo.todo,
+                        deadline:newTodo.deadline,
+                        isDone:false
+                })
                 res.status(201).json(todo)
         } catch (error) {
                 next(error)

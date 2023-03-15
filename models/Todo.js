@@ -8,7 +8,8 @@ const TodoSchema = new Schema({
         deadline:{
                 type:String,
                 required:true
-        }
+        },
+        isDone:{type:Boolean}
 })
 
 const TodoModel =model('TodoApp',TodoSchema)
