@@ -24,10 +24,10 @@ app.use(errorHandler);
 //app.use(notFoundHandler);
 
 app.use('/todos',todoRouter)
+app.use('/users',userRouter)
 app.use('/',(req,res)=>{
         res.send("Hallo  todoApp API")
 })
-app.use('/users',userRouter)
 
 app.listen(PORT , ()=>{
         console.log(`Server läuft http://localhost:${PORT}`);

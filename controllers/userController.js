@@ -44,7 +44,6 @@ const register = async (req, res, next) => {
       profilePicture: profilePicture,
       isOnline: false,
       city: newUser.city,
-      category: newUser.category,
     });
     if (!createdUser) {
       const error = new Error("is required");
