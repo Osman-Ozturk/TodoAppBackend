@@ -7,7 +7,7 @@ import upload from "../multer/multer.js";
 import validateRequest from '../middleware/validator.js'
 const router = express.Router()
 
-router.route("/").get(admin,validateRequest,getUsers);
+router.route("/").get(getUsers);
 router.route("/verify/:token").get(verifyEmail)
 router.route("/verify/password/:token").get(verifyPassword)
 router.route("/register").post(upload.single("file"),userValidator,validateRequest,register);
